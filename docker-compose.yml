@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  talent-tech-db:
+    container_name: talent_tech_database
+    image: postgres:17
+    restart: always
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data  
+    ports:
+      - "${DB_PORT:-5432}:5432"                   
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-talenttech}
+    networks:
+      - talent-tech-net
+
+networks:
+  talent-tech-net:
+    driver: bridge
