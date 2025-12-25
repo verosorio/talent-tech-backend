@@ -21,4 +21,24 @@ export class CompanyDatasource implements CompanyRepository {
       deletedAt: data.deletedAt,
     };
   }
+
+  async create(data: {
+    name: string;
+    email: string;
+    password: string;
+  }): Promise<Company> {
+    const company = await this.prisma.company.create({
+      data,
+    });
+
+    return {
+      id: company.id,
+      name: company.name,
+      email: company.email,
+      password: company.password,
+      createdAt: company.createdAt,
+      updatedAt: company.updatedAt,
+      deletedAt: company.deletedAt,
+    };
+  }
 }

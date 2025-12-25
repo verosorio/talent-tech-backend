@@ -7,6 +7,8 @@ import { AuthController } from './auth.controller';
 import { NestJwtAdapter } from '@infrastructure/services';
 import { PrismaModule } from '@infrastructure/config';
 import { JwtModule } from '@nestjs/jwt';
+import { RegisterCompanyUseCase } from '@domain/uses-cases/auth/register-company.use-case';
+import { RegisterCompanyService } from '@application/services/auth/register-company.service';
 @Module({
   imports: [
     PrismaModule,
@@ -18,6 +20,8 @@ import { JwtModule } from '@nestjs/jwt';
   providers: [
     LoginCompanyUseCase,
     LoginCompanyService,
+    RegisterCompanyUseCase,
+    RegisterCompanyService,
     {
       provide: CompanyRepository,
       useClass: CompanyDatasource,

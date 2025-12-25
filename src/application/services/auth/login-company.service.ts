@@ -10,7 +10,7 @@ import { RegisterCompanyDto } from 'src/application/dtos/register-company.dto'; 
 import { CompanyRepository } from '@domain/repositories/company.repository';
 import { LoginCompanyDto } from '@application/dtos/login-company.dto';
 import type { JwtService } from '@domain/interfaces/jwt-service.interface';
-import { LoginResponseDto } from '@application/dtos/login-response.dto';
+import { LoginResponseDto } from '@application/dtos/login-company-response.dto';
 
 @Injectable()
 export class LoginCompanyService {
