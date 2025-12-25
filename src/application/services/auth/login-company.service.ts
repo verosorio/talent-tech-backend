@@ -6,10 +6,11 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 /* import { Company } from '../../../domain/entities/company.entity';
-import { RegisterCompanyDto } from 'src/application/dtos/register-company.dto'; */  
+import { RegisterCompanyDto } from 'src/application/dtos/register-company.dto'; */
 import { CompanyRepository } from '@domain/repositories/company.repository';
 import { LoginCompanyDto } from '@application/dtos/login-company.dto';
 import type { JwtService } from '@domain/interfaces/jwt-service.interface';
+import { LoginResponseDto } from '@application/dtos/login-response.dto';
 
 @Injectable()
 export class LoginCompanyService {
@@ -42,13 +43,18 @@ export class LoginCompanyService {
     };
   } */
 
-  async login(dto: LoginCompanyDto) {
+  async execute(dto: LoginCompanyDto): Promise<LoginResponseDto> {
     const company = await this.companyRepository.findByEmail(dto.email);
-    if (!company) throw new UnauthorizedException('Invalid credentials');
+
+    if (!company || company.deletedAt) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     const passwordMatch = await bcrypt.compare(dto.password, company.password);
 
-    if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     const payload = { uid: company.id };
     const accessToken = this.jwtService.signAccessToken(payload);
