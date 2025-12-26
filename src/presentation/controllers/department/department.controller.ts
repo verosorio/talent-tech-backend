@@ -9,6 +9,7 @@ import {
   Headers,
   Query,
   ValidationPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { CreateDepartmentDto } from '@application/dtos/departments/create-department.dto';
 import { UpdateDepartmentDto } from '@application/dtos/departments/update-department.dto';
@@ -20,7 +21,9 @@ import { GetDepartmentService } from '@application/services/departments/get-depa
 import { DepartmentResponseDto } from '@application/dtos/departments/department-response.dto';
 import { PaginationDto } from '@application/dtos/pagination/pagination.dto';
 import { PaginatedResponseDto } from '@application/dtos/pagination/paginated-response.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('departments')
 export class DepartmentsController {
   constructor(

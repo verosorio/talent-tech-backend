@@ -11,7 +11,13 @@ import { GetDepartmentService } from '@application/services/departments/get-depa
 import { DepartmentRepository } from '@domain/repositories/department.repository';
 import { DepartmentDatasource } from '@infrastructure/datasources/department.datasource';
 import { DepartmentsController } from './department.controller';
+import { AuthModule } from '../auth/auth.module';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+
 @Module({
+imports: [
+    AuthModule, 
+  ],
  providers: [
     CreateDepartmentUseCase,
     CreateDepartmentService,
@@ -26,6 +32,7 @@ import { DepartmentsController } from './department.controller';
       provide: DepartmentRepository,
       useClass: DepartmentDatasource,
     },
+    JwtAuthGuard
   ],
   controllers: [DepartmentsController],
   exports: [],

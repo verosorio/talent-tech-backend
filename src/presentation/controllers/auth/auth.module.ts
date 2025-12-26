@@ -29,6 +29,6 @@ import { AuthController } from './auth.controller';
     { provide: 'JwtService', useClass: NestJwtAdapter },
   ],
   controllers: [AuthController],
-  exports: [],
+  exports: [JwtModule, 'JwtService'],
 })
 export class AuthModule {}
