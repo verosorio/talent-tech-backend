@@ -19,7 +19,7 @@ import { ListDepartmentsUseCase } from '@domain/uses-cases/departments/list-depa
 import { UpdateDepartmentUseCase } from '@domain/uses-cases/departments/update-department.use-case';
 import { DeleteDepartmentUseCase } from '@domain/uses-cases/departments/delete-department.use-case';
 import { GetDepartmentService } from '@application/services/departments/get-department.service';
-import { DepartmentResponseDto } from '@application/dtos/departments/department-response.dto';
+import { ResponseDepartmentDto } from '@application/dtos/departments/response-department.dto';
 import { PaginationDto } from '@application/dtos/pagination/pagination.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from 'src/common/types/express';
@@ -44,7 +44,7 @@ export class DepartmentsController {
   create(
     @Req() request: AuthenticatedRequest,
     @Body() dto: CreateDepartmentDto,
-  ): Promise<DepartmentResponseDto> {
+  ): Promise<ResponseDepartmentDto> {
     return this.createUseCase.execute(this.getCompanyId(request), dto);
   }
 
@@ -61,7 +61,7 @@ export class DepartmentsController {
   findOne(
     @Req() request: AuthenticatedRequest,
     @Param('id') id: string,
-  ): Promise<DepartmentResponseDto> {
+  ): Promise<ResponseDepartmentDto> {
     return this.getUseCase.execute(this.getCompanyId(request), id);
   }
 
@@ -70,7 +70,7 @@ export class DepartmentsController {
     @Req() request: AuthenticatedRequest,
     @Param('id') id: string,
     @Body() dto: UpdateDepartmentDto,
-  ): Promise<DepartmentResponseDto> {
+  ): Promise<ResponseDepartmentDto> {
     return this.updateUseCase.execute(this.getCompanyId(request), id, dto);
   }
 

@@ -1,13 +1,13 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { DepartmentRepository } from '@domain/repositories/department.repository';
 import { CreateDepartmentDto } from '@application/dtos/departments/create-department.dto';
-import { DepartmentResponseDto } from '@application/dtos/departments/department-response.dto';
+import { ResponseDepartmentDto } from '@application/dtos/departments/response-department.dto';
 
 @Injectable()
 export class CreateDepartmentService {
   constructor(private readonly departmentRepository: DepartmentRepository) {}
 
-  async execute(companyId: string, dto: CreateDepartmentDto) : Promise<DepartmentResponseDto> {
+  async execute(companyId: string, dto: CreateDepartmentDto) : Promise<ResponseDepartmentDto> {
     const exists = await this.departmentRepository.existsByName(companyId, dto.name);
 
     if (exists) {

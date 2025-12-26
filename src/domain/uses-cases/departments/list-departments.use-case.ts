@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ListDepartmentsService } from '@application/services/departments/list-departments.service';
-import { DepartmentResponseDto } from '@application/dtos/departments/department-response.dto';
+import { ResponseDepartmentDto } from '@application/dtos/departments/response-department.dto';
 import { PaginatedResponseDto } from '@application/dtos/pagination/paginated-response.dto';
 import { Department } from '@domain/entities/department.entity';
 
@@ -13,13 +13,13 @@ export class ListDepartmentsUseCase {
   async execute(
     companyId: string,
     pagination: { page: number; limit: number },
-  ): Promise<PaginatedResponseDto<DepartmentResponseDto>> {
+  ): Promise<PaginatedResponseDto<ResponseDepartmentDto>> {
     const { data, total } = await this.listDepartmentsService.execute(
       companyId,
       pagination,
     );
 
-    const departmentsDto: DepartmentResponseDto[] = data.map(
+    const departmentsDto: ResponseDepartmentDto[] = data.map(
       (dep: Department) => ({
         id: dep.id,
         name: dep.name,

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Get, Module } from '@nestjs/common';
 import { CreateDepartmentService } from '@application/services/departments/create-department.service';
 import { CreateDepartmentUseCase } from '@domain/uses-cases/departments/create-department.use-case';
 import { DeleteDepartmentUseCase } from '@domain/uses-cases/departments/delete-department.use-case';
@@ -13,6 +13,7 @@ import { DepartmentDatasource } from '@infrastructure/datasources/department.dat
 import { DepartmentsController } from './department.controller';
 import { AuthModule } from '../auth/auth.module';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { GetDepartmentUseCase } from '@domain/uses-cases/departments/get-department.use-case';
 
 @Module({
 imports: [
@@ -27,6 +28,7 @@ imports: [
     ListDepartmentsService,
     UpdateDepartmentUseCase,
     UpdateDepartmentService,
+    GetDepartmentUseCase,
     GetDepartmentService,
     {
       provide: DepartmentRepository,

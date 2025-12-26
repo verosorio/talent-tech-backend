@@ -1,13 +1,15 @@
+import { Department } from "./department.entity";
+
 export interface Employee {
   id: string;
   companyId: string;
-  departmentId: string | null;
   firstName: string;
   lastName: string;
   email: string;
   isActive: boolean;
-  hireAt: Date;
+  hiredAt: Date;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  department?: Department | null;
 }
