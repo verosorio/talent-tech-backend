@@ -80,4 +80,25 @@ export class DepartmentDatasource implements DepartmentRepository {
 
     return count > 0;
   }
+
+  async findByName(
+    companyId: string,
+    name: string,
+  ): Promise<Department | null> {
+    const department = await this.prisma.department.findFirst({
+      where: { companyId, name, deletedAt: null },
+    });
+
+    return department
+      ? {
+          id: department.id,
+          companyId: department.companyId,
+          name: department.name,
+          description: department.description,
+          createdAt: department.createdAt,
+          updatedAt: department.updatedAt,
+          deletedAt: department.deletedAt,
+        }
+      : null;
+  }
 }

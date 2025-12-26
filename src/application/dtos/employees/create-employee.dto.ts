@@ -1,10 +1,20 @@
-import { IsString, IsEmail, IsOptional, IsBoolean, IsDateString, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsBoolean,
+  IsDateString,
+  IsUUID,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class CreateEmployeeDto {
   @IsString()
+  @IsNotEmpty()
   firstName: string;
 
   @IsString()
+  @IsNotEmpty()
   lastName: string;
 
   @IsEmail()
@@ -19,5 +29,6 @@ export class CreateEmployeeDto {
   isActive?: boolean;
 
   @IsDateString()
+  @IsNotEmpty()
   hiredAt: string;
 }

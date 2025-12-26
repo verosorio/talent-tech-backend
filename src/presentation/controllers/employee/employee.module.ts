@@ -17,6 +17,8 @@ import { DepartmentRepository } from '@domain/repositories/department.repository
 import { DepartmentDatasource } from '@infrastructure/datasources/department.datasource';
 import { GetEmployeeService } from '@application/services/employees/get-employee.service';
 import { GetEmployeeUseCase } from '@domain/uses-cases/employees/get-employee.use-case';
+import { UploadEmployeesUseCase } from '@domain/uses-cases/employees/upload-employees.use-case';
+import { UploadEmployeesService } from '@application/services/employees/upload-employees.service';
 
 @Module({
   imports: [AuthModule],
@@ -31,6 +33,8 @@ import { GetEmployeeUseCase } from '@domain/uses-cases/employees/get-employee.us
     UpdateEmployeeService,
     GetEmployeeUseCase,
     GetEmployeeService,
+    UploadEmployeesUseCase,
+    UploadEmployeesService,
     {
       provide: EmployeeRepository,
       useClass: EmployeeDatasource,

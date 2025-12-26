@@ -11,6 +11,9 @@ import {
   Delete,
   Query,
   ValidationPipe,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateEmployeeDto } from '@application/dtos/employees/create-employee.dto';
 import { ResponseEmployeeDto } from '@application/dtos/employees/response-employee.dto';
@@ -21,10 +24,13 @@ import { GetEmployeeUseCase } from '@domain/uses-cases/employees/get-employee.us
 import { ListEmployeesUseCase } from '@domain/uses-cases/employees/list-employees.use-case';
 import { UpdateEmployeeUseCase } from '@domain/uses-cases/employees/update-employee.use-case';
 import { DeleteEmployeeUseCase } from '@domain/uses-cases/employees/delete-employee.use-case';
+import { UploadEmployeesUseCase } from '@domain/uses-cases/employees/upload-employees.use-case';
 import { UpdateEmployeeDto } from '@application/dtos/employees/update-employee.dto';
-import { PaginationDto } from '@application/dtos/pagination/pagination.dto';
-import { EmployeeFiltersDto } from '@application/dtos/employees/employee-filters.dto';
 import { ListEmployeesQueryDto } from '@application/dtos/employees/list-employees-query.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { BulkUploadResultDto } from '@application/dtos/employees/bulk/bulk-upload-result.dto';
+import { parseEmployeeCsv } from '@infrastructure/utils/csv/employee-csv.parser';
+import { BulkEmployeeDto } from '@application/dtos/employees/bulk/bulk-employee.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('employees')
@@ -35,6 +41,7 @@ export class EmployeesController {
     private readonly updateUseCase: UpdateEmployeeUseCase,
     private readonly deleteUseCase: DeleteEmployeeUseCase,
     private readonly getUseCase: GetEmployeeUseCase,
+    private readonly uploadEmployeesUseCase: UploadEmployeesUseCase,
   ) {}
 
   private getCompanyId(request: AuthenticatedRequest): string {
@@ -90,5 +97,44 @@ export class EmployeesController {
   @Delete(':id')
   async delete(@Req() request: AuthenticatedRequest, @Param('id') id: string) {
     return this.deleteUseCase.execute(request.user.uid, id);
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async upload(
+    @Req() request: AuthenticatedRequest,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<BulkUploadResultDto> {
+    if (!file) {
+      throw new BadRequestException('CSV file is required');
+    }
+
+    let parsedCsv: any[];
+    try {
+      parsedCsv = parseEmployeeCsv(file.buffer);
+    } catch (error) {
+      throw new BadRequestException('Invalid CSV format');
+    }
+
+    const parsed: BulkEmployeeDto[] = parsedCsv.map((row) => ({
+      firstName: row.firstName,
+      lastName: row.lastName,
+      email: row.email,
+      departmentName: row.departmentName,
+      isActive: row.isActive
+        ? row.isActive.toLowerCase() === 'true'
+        : undefined,
+      hiredAt: row.hiredAt,
+    }));
+
+    for (const row of parsed) {
+      if (!row.firstName || !row.lastName || !row.email) {
+        throw new BadRequestException('Missing required fields in CSV');
+      }
+    }
+
+    const companyId = request.user.uid;
+
+    return this.uploadEmployeesUseCase.execute(companyId, parsed);
   }
 }

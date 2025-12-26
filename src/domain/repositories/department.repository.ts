@@ -29,4 +29,6 @@ export abstract class DepartmentRepository {
   abstract softDelete(id: string): Promise<void>;
 
   abstract existsByName(companyId: string, name: string): Promise<boolean>;
+
+  abstract findByName(companyId: string, name: string): Promise<Department | null>;
 }
