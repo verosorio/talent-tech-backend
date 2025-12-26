@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { LoginCompanyDto } from '@application/dtos/login-company.dto';
 import { LoginCompanyService } from '@application/services/auth/login-company.service';
-import { LoginResponseDto } from '@application/dtos/login-company-response.dto';
+import { LoginResponseDto } from '@application/dtos/auth/login-company-response.dto';
+import { LoginCompanyDto } from '@application/dtos/auth/login-company.dto';
 
 @Injectable()
 export class LoginCompanyUseCase {

@@ -4,8 +4,8 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { CompanyRepository } from '@domain/repositories/company.repository';
-import { RegisterCompanyDto } from '@application/dtos/register-company.dto';
-import { RegisterCompanyResponseDto } from '@application/dtos/register-company-response.dto';
+import { RegisterCompanyDto } from '@application/dtos/auth/register-company.dto';
+import { RegisterCompanyResponseDto } from '@application/dtos/auth/register-company-response.dto';
 
 @Injectable()
 export class RegisterCompanyService {

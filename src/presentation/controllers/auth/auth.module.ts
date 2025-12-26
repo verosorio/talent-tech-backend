@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
-import { LoginCompanyService } from '@application/services/auth/login-company.service';
-import { CompanyRepository } from '@domain/repositories/company.repository';
-import { LoginCompanyUseCase } from '@domain/uses-cases/auth/login-company.use-case';
-import { CompanyDatasource } from '@infrastructure/datasources/prisma-company.datasource';
-import { AuthController } from './auth.controller';
 import { NestJwtAdapter } from '@infrastructure/services';
 import { PrismaModule } from '@infrastructure/config';
 import { JwtModule } from '@nestjs/jwt';
+import { CompanyRepository } from '@domain/repositories/company.repository';
 import { RegisterCompanyUseCase } from '@domain/uses-cases/auth/register-company.use-case';
+import { LoginCompanyUseCase } from '@domain/uses-cases/auth/login-company.use-case';
 import { RegisterCompanyService } from '@application/services/auth/register-company.service';
+import { LoginCompanyService } from '@application/services/auth/login-company.service';
+import { CompanyDatasource } from '@infrastructure/datasources/company.datasource';
+import { AuthController } from './auth.controller';
 @Module({
   imports: [
     PrismaModule,

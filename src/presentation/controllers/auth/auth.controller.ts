@@ -1,9 +1,9 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { LoginCompanyDto } from '@application/dtos/login-company.dto';
+import { LoginCompanyDto } from '@application/dtos/auth/login-company.dto';
 import { LoginCompanyUseCase } from '@domain/uses-cases/auth/login-company.use-case';
-import { LoginResponseDto } from '@application/dtos/login-company-response.dto';
-import { RegisterCompanyDto } from '@application/dtos/register-company.dto';
-import { RegisterCompanyResponseDto } from '@application/dtos/register-company-response.dto';
+import { LoginResponseDto } from '@application/dtos/auth/login-company-response.dto';
+import { RegisterCompanyDto } from '@application/dtos/auth/register-company.dto';
+import { RegisterCompanyResponseDto } from '@application/dtos/auth/register-company-response.dto';
 import { RegisterCompanyUseCase } from '@domain/uses-cases/auth/register-company.use-case';
 
 @Controller('auth')

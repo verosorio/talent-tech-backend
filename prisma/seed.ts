@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { seedCompanies } from './seeders/company.seeder';
+import { seedDepartments } from './seeders/department.seeder';
 
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({ connectionString });
@@ -14,6 +15,7 @@ async function main() {
 
   try {
     await seedCompanies(prisma);
+    await seedDepartments(prisma);
 
     console.log('\n✅ Proceso de seed completado exitosamente');
   } catch (error) {
