@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   talent-tech-db:
     container_name: talent_tech_database
@@ -31,7 +29,7 @@ services:
     ports:
       - '3000:3000'
     env_file:
-      - .env.production
+      - .env
     depends_on:
       talent-tech-db:
         condition: service_healthy

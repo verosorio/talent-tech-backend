@@ -1,196 +1,171 @@
-# talent-tech-backend API
-API REST para la gestión de empleados y departamentos de empresas, desarrollada con NestJS, Prisma y Postgres/MySQL.
+# talent-tech-backend
 
+API REST para la gestión de **empresas, departamentos y empleados**, desarrollada con **NestJS**, **Prisma** y **PostgreSQL**, ejecutada **completamente con Docker**.
 
+> Este proyecto está diseñado para ejecutarse con **Docker**.  
+> No se recomienda correr Prisma ni la API directamente desde el host.
 
+---
 
-## 🛠 Instalación
+## Stack Tecnológico
 
-1. Clonar el repositorio:
+- NestJS
+- Prisma ORM
+- PostgreSQL
+- Docker & Docker Compose
+- JWT Authentication
+- CSV Upload
 
+---
+
+## Requisitos
+
+- Docker ≥ 24
+- Docker Compose v2
+- Node.js (opcional, solo para desarrollo sin Docker)
+
+---
+
+## 🛠 Instalación (modo recomendado: Docker)
+
+### Clonar el repositorio
+
+```bash
 git clone https://github.com/verosorio/talent-tech-backend.git
 cd talent-tech-backend
+```
 
+### Configurar variables de entorno
 
-2. Instalar dependencias
-
-npm install
-
-
-3. Configurar variables de entorno:
-
-Copia .env.example a .env y completa los valores según tu entorno local.
-
+```bash
 cp .env.example .env
+```
 
+#### Variables por defecto:
 
-4. Generar el cliente de prisma
+```env
+# ======================
+# Base de Datos (Docker)
+# ======================
+DATABASE_URL="postgresql://postgres:postgres@talent-tech-db:5432/talent_tech"
 
-npx prisma generate
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=talent_tech
 
+# ======================
+# API
+# ======================
+PORT=3000
 
-5. (Opcional) Levantar con Docker
+# ======================
+# JWT
+# ======================
+JWT_SECRET=your_jwt_secret
+JWT_REFRESH_SECRET=your_jwt_refresh_secret
+JWT_EXPIRES_IN=15m
 
-docker compose up -d
+# ======================
+# Entorno
+# ======================
+NODE_ENV=production
+```
 
+### Levantar los contenedores
 
-6. Crear la base de datos y ejecutar migraciones:
+```bash
+docker compose up -d --build
+```
 
-npx prisma migrate dev
+### Ejecutar migraciones (OBLIGATORIO)
 
-
-7. (Opcional) Cargar datos de prueba usando seeders:
-
-npm run prisma:seed
-
-
-## 🚀 Ejecución
-🔧 Modo Desarrollo
-
-Terminal 1: Levantar solo la base de datos
-
-docker compose up talent-tech-db -d
-
-
-Terminal 2: Ejecutar la app en modo desarrollo
-
-npm run start:dev
-
-
-🖥️ Modo Producción
-
-1. Detener contenedores actuales
-docker compose down
-
-2. Reconstruir con el nuevo .env.production
-docker compose up --build -d
-
-3. Ver logs
-docker compose logs -f talent-tech-api
-
-4. Ejecutar migraciones
+```bash
 docker compose exec talent-tech-api npx prisma migrate deploy
+```
 
-5. Seeders (opcional)
+### Ejecutar seeders (opcional)
+
+```bash
 docker compose exec talent-tech-api npx prisma db seed
+```
 
+---
 
-Para levantar la app en modo producción (sin reconstruir):
+## 🚀 Acceso a la API
 
-docker-compose up -d
+- **Base URL:** `http://localhost:3000`
+- **Swagger UI:** `http://localhost:3000/api`
 
+---
 
+## 🧪 Datos de Prueba (Seed)
 
-## 🚀 Comandos principales
+Si ejecutaste el comando de seed, puedes usar las siguientes credenciales para probar la API (Login):
 
-- Levantar la aplicación en modo desarrollo:
+| Empresa            | Email              | Password    |
+| ------------------ | ------------------ | ----------- |
+| Acme Corp          | `admin@acme.com`   | `Admin123!` |
+| Globex Corporation | `admin@globex.com` | `Admin123!` |
 
-npm run start:dev
+> **Nota:** El seed también genera departamentos (RH, IT, Marketing) y empleados de prueba para estas empresas.
 
+---
 
-- Construir proyecto para producción:
+## 🗄️ Estructura de la Base de Datos
 
-npm run build
+### Tablas principales
 
+| Tabla                         | Descripción                          |
+| ----------------------------- | ------------------------------------ |
+| `companies`                   | Empresas                             |
+| `departments`                 | Departamentos                        |
+| `employees`                   | Empleados                            |
+| `employee_department_history` | Historial de cambios de departamento |
 
-- Ejecutar seeders
+### Relaciones
 
-npm run prisma:seed
+- **Company** → **Departments** (1:N)
+- **Company** → **Employees** (1:N)
+- **Department** → **Employees** (1:N)
+- **Employee** → **EmployeeDepartmentHistory** (1:N)
 
+### Auditoría
 
+- `createdAt`
+- `updatedAt`
+- `deletedAt` (eliminación lógica)
 
-## 🗄 Estructura de la base de datos
+---
 
-1. Tablas principales:
+## 📡 Endpoints Principales
 
-Tabla	                         Descripción
-companies	                     Empresas
-departments	                     Departamentos de cada empresa
-employees	                     Empleados
-employee_department_history	     Historial de cambios de departamento
+### Employees
 
+| Método   | Ruta                | Descripción          |
+| -------- | ------------------- | -------------------- |
+| `POST`   | `/employees`        | Crear empleado       |
+| `GET`    | `/employees`        | Listar empleados     |
+| `GET`    | `/employees/:id`    | Obtener empleado     |
+| `PATCH`  | `/employees/:id`    | Actualizar empleado  |
+| `DELETE` | `/employees/:id`    | Eliminación lógica   |
+| `POST`   | `/employees/upload` | Carga masiva por CSV |
 
-2. Relaciones:
+### Departments
 
-Company → Departments (1:N)
+| Método   | Ruta               | Descripción          |
+| -------- | ------------------ | -------------------- |
+| `POST`   | `/departments`     | Crear departamento   |
+| `GET`    | `/departments`     | Listar departamentos |
+| `GET`    | `/departments/:id` | Obtener departamento |
+| `PATCH`  | `/departments/:id` | Actualizar           |
+| `DELETE` | `/departments/:id` | Eliminación lógica   |
 
-Company → Employees (1:N)
+---
 
-Department → Employees (1:N)
+## 🔐 Seguridad
 
-Employee → EmployeeDepartmentHistory (1:N)
-
-
-
-3. Timestamps y auditoría:
-
-createdAt, updatedAt
-
-deletedAt para eliminaciones lógicas
-
-
-
-4. Indices importantes:
-
-employees.email único por empresa
-
-departments.name único por empresa
-
-Índices para consultas por companyId, departmentId y hiredAt
-
-
-
-
-
-## 📦 Endpoints principales
-
-Employees:
-
-Método	Ruta	Descripción
-POST	/employees	Crear empleado
-GET	/employees	Listar empleados
-GET	/employees/:id	Obtener empleado por ID
-PATCH	/employees/:id	Actualizar empleado
-DELETE	/employees/:id	Eliminar empleado (lógico)
-POST	/employees/upload	Subir CSV de empleados
-
-Departments:
-
-Método	Ruta	Descripción
-POST	/departments	Crear departamento
-GET	/departments	Listar departamentos
-GET	/departments/:id	Obtener departamento por ID
-PATCH	/departments/:id	Actualizar departamento
-DELETE	/departments/:id	Eliminar departamento (lógico)
-
-
-
-## 🔑 Seguridad
-
-- JWT para autenticación
-- Validación y sanitización de datos (incluyendo CSV)
-- Autorización por empresa
-- Protección contra inyecciones mediante Prisma y validaciones de DTO
-
-
-## Ejemplos de consumo de API
-
-1. Listar empleados
-
-curl -X GET http://localhost:3000/employees \
--H "Authorization: Bearer <TOKEN>"
-
-
-2. Crear un empleado
-
-curl -X POST http://localhost:3000/employees \
--H "Authorization: Bearer <TOKEN>" \
--H "Content-Type: application/json" \
--d '{
-  "firstName": "Juan",
-  "lastName": "Pérez",
-  "email": "juan.perez@example.com",
-  "departmentName": "Ventas",
-  "hiredAt": "2023-01-15",
-  "isActive": true
-}'
+- Autenticación mediante **JWT**.
+- Autorización por **empresa**.
+- Validación de DTOs.
+- Protección contra inyección SQL mediante **Prisma**.
+- Contraseñas hasheadas con **bcrypt**.
