@@ -1,4 +1,3 @@
-// src/infrastructure/datasources/employee.datasource.ts
 import { Injectable } from '@nestjs/common';
 import { EmployeeRepository } from '@domain/repositories/employee.repository';
 import { PrismaService } from '@infrastructure/config/prisma.service';
