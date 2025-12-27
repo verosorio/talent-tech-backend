@@ -6,13 +6,35 @@ services:
     image: postgres:17
     restart: always
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data  
+      - ./postgres-data:/var/lib/postgresql/data
     ports:
-      - "${DB_PORT:-5432}:5432"                   
+      - '${DB_PORT:-5432}:5432'
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
       POSTGRES_DB: ${POSTGRES_DB:-talenttech}
+    networks:
+      - talent-tech-net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicación NestJS
+  talent-tech-api:
+    container_name: talent_tech_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env.production
+    depends_on:
+      talent-tech-db:
+        condition: service_healthy
     networks:
       - talent-tech-net
 
