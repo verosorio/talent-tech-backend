@@ -24,24 +24,8 @@ export class ListEmployeesUseCase {
       filters,
     );
 
-    const response = data.map((emp) => ({
-      id: emp.id,
-      firstName: emp.firstName,
-      lastName: emp.lastName,
-      email: emp.email,
-      isActive: emp.isActive,
-      hiredAt: emp.hiredAt,
-      department: emp.department
-        ? {
-            id: emp.department.id,
-            name: emp.department.name,
-            description: emp.department.description ?? null,
-          }
-        : null,
-    }));
-
     return new PaginatedResponseDto(
-      response,
+      data,
       total,
       pagination.page,
       pagination.limit,

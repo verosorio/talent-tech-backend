@@ -1,4 +1,8 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { EmployeeRepository } from '@domain/repositories/employee.repository';
 import { DepartmentRepository } from '@domain/repositories/department.repository';
 import { BulkEmployeeDto } from '@application/dtos/employees/bulk/bulk-employee.dto';
@@ -8,12 +12,12 @@ import { BulkUploadResultDto } from '@application/dtos/employees/bulk/bulk-uploa
 export class UploadEmployeesService {
   constructor(
     private readonly employeeRepository: EmployeeRepository,
-    private readonly departmentRepository: DepartmentRepository
+    private readonly departmentRepository: DepartmentRepository,
   ) {}
 
   async execute(
     companyId: string,
-    employees: BulkEmployeeDto[]
+    employees: BulkEmployeeDto[],
   ): Promise<BulkUploadResultDto> {
     const result: BulkUploadResultDto = { success: [], failed: [] };
 
@@ -21,17 +25,21 @@ export class UploadEmployeesService {
       try {
         const exists = await this.employeeRepository.existsByEmail(
           companyId,
-          row.email
+          row.email,
         );
-        if (exists) throw new ConflictException('El email ya se encuentra registrado');
+        if (exists)
+          throw new ConflictException('El email ya se encuentra registrado');
 
         let departmentId: string | undefined;
         if (row.departmentName) {
           const dept = await this.departmentRepository.findByName(
             companyId,
-            row.departmentName
+            row.departmentName,
           );
-          if (!dept) throw new Error(`Departamento no encontrado`);
+          if (!dept)
+            throw new BadRequestException(
+              `El departamento "${row.departmentName}" no existe`,
+            );
           departmentId = dept.id;
         }
 
@@ -42,7 +50,7 @@ export class UploadEmployeesService {
           email: row.email,
           departmentId: departmentId || null,
           isActive: row.isActive ?? true,
-          hiredAt: row.hiredAt.toISOString()
+          hiredAt: row.hiredAt.toISOString(),
         });
 
         result.success.push(row);

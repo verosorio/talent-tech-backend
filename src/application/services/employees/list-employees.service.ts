@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EmployeeRepository } from '@domain/repositories/employee.repository';
-import { Employee } from '@domain/entities/employee.entity';
 import { PaginationDto } from '@application/dtos/pagination/pagination.dto';
+import { ResponseEmployeeDto } from '@application/dtos/employees/response-employee.dto';
 
 @Injectable()
 export class ListEmployeesService {
@@ -16,7 +16,30 @@ export class ListEmployeesService {
       hiredFrom?: Date;
       hiredTo?: Date;
     },
-  ):  Promise<{ data: Employee[]; total: number }> {
-    return this.employeeRepository.findAll(companyId, pagination, filters);
+  ): Promise<{ data: ResponseEmployeeDto[]; total: number }> {
+    const { data, total } = await this.employeeRepository.findAll(
+      companyId,
+      pagination,
+      filters,
+    );
+
+    return {
+      total,
+      data: data.map((emp) => ({
+        id: emp.id,
+        firstName: emp.firstName,
+        lastName: emp.lastName,
+        email: emp.email,
+        isActive: emp.isActive,
+        hiredAt: emp.hiredAt,
+        department: emp.department
+          ? {
+              id: emp.department.id,
+              name: emp.department.name,
+              description: emp.department.description ?? null,
+            }
+          : null,
+      })),
+    };
   }
 }

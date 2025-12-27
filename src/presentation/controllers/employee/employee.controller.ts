@@ -16,7 +16,13 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Throttle } from '@nestjs/throttler';
-import { ApiBearerAuth, ApiTags, ApiResponse, ApiBody } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiResponse,
+  ApiBody,
+  ApiConsumes,
+} from '@nestjs/swagger';
 
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { ApiUnauthorized } from 'src/common/decorators/api-unauthorized.decorator';
@@ -185,11 +191,25 @@ export class EmployeesController {
 
   @Post('upload')
   @Throttle({ default: { limit: 5, ttl: 60 } })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      required: ['file'],
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'Archivo CSV (.csv)',
+        },
+      },
+    },
+  })
   @UseInterceptors(
     FileInterceptor('file', { limits: { fileSize: 2 * 1024 * 1024 } }),
   )
   @ApiResponse({
-    status: 200,
+    status: 201,
     description: 'Archivo CSV procesado',
     type: BulkUploadResultDto,
   })
@@ -220,9 +240,9 @@ export class EmployeesController {
     @Req() request: AuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<BulkUploadResultDto> {
-    if (!file) throw new BadRequestException('CSV file is required');
+    if (!file) throw new BadRequestException('El archivo CSV es obligatorio');
     if (!['text/csv', 'application/vnd.ms-excel'].includes(file.mimetype))
-      throw new BadRequestException('Only CSV files are allowed');
+      throw new BadRequestException('Solo se permiten archivos CSV');
 
     return this.uploadEmployeesUseCase.execute(
       this.getCompanyId(request),

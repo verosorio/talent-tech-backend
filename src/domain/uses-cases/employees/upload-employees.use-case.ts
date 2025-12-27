@@ -10,7 +10,6 @@ export class UploadEmployeesUseCase {
 
   async execute(companyId: string, buffer: Buffer): Promise<BulkUploadResultDto> {
     const parsed = parseEmployeeCsv(buffer);
-
     const sanitized: BulkEmployeeDto[] = parsed.map(row => {
       const firstName = row.firstName?.trim();
       const lastName = row.lastName?.trim();
@@ -19,17 +18,17 @@ export class UploadEmployeesUseCase {
 
       if (!firstName || !lastName) {
         throw new BadRequestException(
-          `Missing required fields for email: ${email}`
+          `Faltan campos obligatorios para el empleado con email: ${email}`
         );
       }
 
       if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-        throw new BadRequestException(`Invalid email: ${row.email}`);
+        throw new BadRequestException(`Correo electrónico inválido: ${row.email}`);
       }
 
       const hiredAt = row.hiredAt ? new Date(row.hiredAt) : new Date();
       if (isNaN(hiredAt.getTime())) {
-        throw new BadRequestException(`Invalid hire date: ${row.hiredAt}`);
+        throw new BadRequestException(`Fecha de contratación inválida: ${row.hiredAt}`);
       }
 
       const isActive =

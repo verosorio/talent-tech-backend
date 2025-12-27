@@ -1,8 +1,12 @@
-import { Injectable, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateEmployeeDto } from '@application/dtos/employees/create-employee.dto';
-import { Employee } from '@domain/entities/employee.entity';
 import { EmployeeRepository } from '@domain/repositories/employee.repository';
 import { DepartmentRepository } from '@domain/repositories/department.repository';
+import { ResponseEmployeeDto } from '@application/dtos/employees/response-employee.dto';
 
 @Injectable()
 export class CreateEmployeeService {
@@ -11,7 +15,10 @@ export class CreateEmployeeService {
     private departmentRepository: DepartmentRepository,
   ) {}
 
-  async execute(companyId: string, dto: CreateEmployeeDto): Promise<Employee> {
+  async execute(
+    companyId: string,
+    dto: CreateEmployeeDto,
+  ): Promise<ResponseEmployeeDto> {
     const exists = await this.employeeRepository.existsByEmail(
       companyId,
       dto.email,
@@ -29,9 +36,25 @@ export class CreateEmployeeService {
         throw new BadRequestException('El Departamento indicado no existe');
       }
     }
-    return this.employeeRepository.create({
+    const employee = await this.employeeRepository.create({
       ...dto,
       companyId,
     });
+
+    return {
+      id: employee.id,
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      email: employee.email,
+      isActive: employee.isActive,
+      hiredAt: employee.hiredAt,
+      department: employee.department
+        ? {
+            id: employee.department.id,
+            name: employee.department.name,
+            description: employee.department.description ?? null,
+          }
+        : null,
+    };
   }
 }
