@@ -49,7 +49,7 @@ npm run prisma:seed
 
 Terminal 1: Levantar solo la base de datos
 
-docker-compose up talent-tech-db -d
+docker compose up talent-tech-db -d
 
 
 Terminal 2: Ejecutar la app en modo desarrollo
