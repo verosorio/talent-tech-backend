@@ -13,6 +13,10 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -31,7 +35,23 @@ export class EmployeeDepartmentHistoryController {
   ) {}
 
   @Post()
-  @ApiUnauthorized()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Registrar cambio de departamento de un empleado' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del empleado cuyo departamento se va a cambiar',
+    type: String,
+  })
+  @ApiBody({ type: RecordDepartmentChangeDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Cambio registrado correctamente',
+    type: EmployeeHistoryResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Empleado o departamento no encontrado',
+  })
   async recordChange(
     @Param('id') employeeId: string,
     @Req() request: AuthenticatedRequest,
@@ -46,6 +66,21 @@ export class EmployeeDepartmentHistoryController {
 
   @Get('history')
   @ApiUnauthorized()
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Obtener historial de cambios de departamento de un empleado',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID del empleado',
+    type: String,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Historial obtenido correctamente',
+    type: [EmployeeHistoryResponseDto],
+  })
+  @ApiResponse({ status: 404, description: 'Empleado no encontrado' })
   async getHistory(
     @Param('id') employeeId: string,
     @Req() request: AuthenticatedRequest,
