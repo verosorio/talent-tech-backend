@@ -8,8 +8,8 @@ API REST para la gestión de empleados y departamentos de empresas, desarrollada
 
 1. Clonar el repositorio:
 
-git clone <TU_REPO_URL>
-cd talenttech
+git clone https://github.com/verosorio/talent-tech-backend.git
+cd talent-tech-backend
 
 
 2. Instalar dependencias
@@ -31,7 +31,7 @@ npx prisma generate
 
 5. (Opcional) Levantar con Docker
 
-docker-compose up -d
+docker compose up -d
 
 
 6. Crear la base de datos y ejecutar migraciones:
@@ -44,7 +44,40 @@ npx prisma migrate dev
 npm run prisma:seed
 
 
+## 🚀 Ejecución
+🔧 Modo Desarrollo
 
+Terminal 1: Levantar solo la base de datos
+
+docker-compose up talent-tech-db -d
+
+
+Terminal 2: Ejecutar la app en modo desarrollo
+
+npm run start:dev
+
+
+🖥️ Modo Producción
+
+1. Detener contenedores actuales
+docker compose down
+
+2. Reconstruir con el nuevo .env.production
+docker compose up --build -d
+
+3. Ver logs
+docker compose logs -f talent-tech-api
+
+4. Ejecutar migraciones
+docker compose exec talent-tech-api npx prisma migrate deploy
+
+5. Seeders (opcional)
+docker compose exec talent-tech-api npx prisma db seed
+
+
+Para levantar la app en modo producción (sin reconstruir):
+
+docker-compose up -d
 
 
 
@@ -138,3 +171,26 @@ DELETE	/departments/:id	Eliminar departamento (lógico)
 - Validación y sanitización de datos (incluyendo CSV)
 - Autorización por empresa
 - Protección contra inyecciones mediante Prisma y validaciones de DTO
+
+
+## Ejemplos de consumo de API
+
+1. Listar empleados
+
+curl -X GET http://localhost:3000/employees \
+-H "Authorization: Bearer <TOKEN>"
+
+
+2. Crear un empleado
+
+curl -X POST http://localhost:3000/employees \
+-H "Authorization: Bearer <TOKEN>" \
+-H "Content-Type: application/json" \
+-d '{
+  "firstName": "Juan",
+  "lastName": "Pérez",
+  "email": "juan.perez@example.com",
+  "departmentName": "Ventas",
+  "hiredAt": "2023-01-15",
+  "isActive": true
+}'
