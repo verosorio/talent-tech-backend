@@ -7,14 +7,23 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from '@presentation/controllers/auth/auth.module';
 import { DepartmentModule } from '@presentation/controllers/department/department.module';
 import { EmployeeModule } from '@presentation/controllers/employee/employee.module';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60,
+          limit: 30,
+        },
+      ],
+    }),
     PrismaModule,
     AuthModule,
     DepartmentModule,
-    EmployeeModule
+    EmployeeModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],

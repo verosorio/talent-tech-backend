@@ -5,7 +5,7 @@ import { EmployeeRepository } from '@domain/repositories/employee.repository';
 import { EmployeeDatasource } from '@infrastructure/datasources/employee.datasource';
 import { AuthModule } from '../auth/auth.module';
 import { CreateEmployeeUseCase } from '@domain/uses-cases/employees/create-employe.use-case';
-import { CreateEmployeeService } from '@application/services/employees/create-employe.service';
+import { CreateEmployeeService } from '@application/services/employees/create-employee.service';
 import { DeleteEmployeeUseCase } from '@domain/uses-cases/employees/delete-employee.use-case';
 import { DeleteEmployeeService } from '@application/services/employees/delete-employee.service';
 import { ListEmployeesUseCase } from '@domain/uses-cases/employees/list-employees.use-case';

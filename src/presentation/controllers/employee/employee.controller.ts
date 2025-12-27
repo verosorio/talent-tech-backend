@@ -29,8 +29,7 @@ import { UpdateEmployeeDto } from '@application/dtos/employees/update-employee.d
 import { ListEmployeesQueryDto } from '@application/dtos/employees/list-employees-query.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { BulkUploadResultDto } from '@application/dtos/employees/bulk/bulk-upload-result.dto';
-import { parseEmployeeCsv } from '@infrastructure/utils/csv/employee-csv.parser';
-import { BulkEmployeeDto } from '@application/dtos/employees/bulk/bulk-employee.dto';
+import { Throttle } from '@nestjs/throttler';
 
 @UseGuards(JwtAuthGuard)
 @Controller('employees')
@@ -100,7 +99,19 @@ export class EmployeesController {
   }
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('file'))
+  @Throttle({
+    default: {
+      limit: 5, // 5 uploads
+      ttl: 60, // por minuto
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 2 * 1024 * 1024, // 2MB
+      },
+    }),
+  )
   async upload(
     @Req() request: AuthenticatedRequest,
     @UploadedFile() file: Express.Multer.File,
@@ -109,32 +120,12 @@ export class EmployeesController {
       throw new BadRequestException('CSV file is required');
     }
 
-    let parsedCsv: any[];
-    try {
-      parsedCsv = parseEmployeeCsv(file.buffer);
-    } catch (error) {
-      throw new BadRequestException('Invalid CSV format');
-    }
-
-    const parsed: BulkEmployeeDto[] = parsedCsv.map((row) => ({
-      firstName: row.firstName,
-      lastName: row.lastName,
-      email: row.email,
-      departmentName: row.departmentName,
-      isActive: row.isActive
-        ? row.isActive.toLowerCase() === 'true'
-        : undefined,
-      hiredAt: row.hiredAt,
-    }));
-
-    for (const row of parsed) {
-      if (!row.firstName || !row.lastName || !row.email) {
-        throw new BadRequestException('Missing required fields in CSV');
-      }
+    if (!['text/csv', 'application/vnd.ms-excel'].includes(file.mimetype)) {
+      throw new BadRequestException('Only CSV files are allowed');
     }
 
     const companyId = request.user.uid;
 
-    return this.uploadEmployeesUseCase.execute(companyId, parsed);
+    return this.uploadEmployeesUseCase.execute(companyId, file.buffer);
   }
 }

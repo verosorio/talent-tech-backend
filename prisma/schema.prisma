@@ -10,10 +10,10 @@ model Company {
   id        String    @id @default(uuid())
   name      String
   email     String    @unique
-  password  String // hashed password
+  password  String
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
-  deletedAt DateTime? @map("deleted_at") // para eliminación lógica, null = activo
+  deletedAt DateTime? @map("deleted_at")
 
   departments Department[]
   employees   Employee[]
@@ -30,10 +30,12 @@ model Department {
   updatedAt   DateTime  @updatedAt @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
 
-  company   Company    @relation(fields: [companyId], references: [id])
-  employees Employee[]
+  company           Company                     @relation(fields: [companyId], references: [id])
+  employees         Employee[]
+  departmentHistory EmployeeDepartmentHistory[]
 
-  @@unique([companyId, name]) // nombre único por empresa
+  @@unique([companyId, name])
+  @@index([companyId])
   @@map("departments")
 }
 
@@ -53,6 +55,27 @@ model Employee {
   company    Company     @relation(fields: [companyId], references: [id])
   department Department? @relation(fields: [departmentId], references: [id])
 
-  @@unique([companyId, email]) // email único dentro de una empresa
+  departmentHistory EmployeeDepartmentHistory[]
+
+  @@unique([companyId, email])
+  @@index([companyId])
+  @@index([companyId, departmentId])
+  @@index([hiredAt])
   @@map("employees")
+}
+
+model EmployeeDepartmentHistory {
+  id           String    @id @default(uuid())
+  employeeId   String
+  departmentId String
+  fromDate     DateTime  @default(now())
+  toDate       DateTime?
+
+  employee   Employee   @relation(fields: [employeeId], references: [id])
+  department Department @relation(fields: [departmentId], references: [id])
+
+  @@index([employeeId])
+  @@index([departmentId])
+  @@index([fromDate, toDate])
+  @@map("employee_department_history")
 }
