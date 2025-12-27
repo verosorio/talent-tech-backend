@@ -6,7 +6,6 @@ import {
   Delete,
   Body,
   Param,
-  Headers,
   Query,
   ValidationPipe,
   UseGuards,
@@ -23,7 +22,12 @@ import { ResponseDepartmentDto } from '@application/dtos/departments/response-de
 import { PaginationDto } from '@application/dtos/pagination/pagination.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import type { AuthenticatedRequest } from 'src/common/types/express';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiUnauthorized } from 'src/common/decorators/api-unauthorized.decorator';
+import { PaginatedMetaResponseDto } from '@application/dtos/pagination/pagination-meta.dto';
 
+@ApiTags('Departamentos')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('departments')
 export class DepartmentsController {
@@ -35,12 +39,29 @@ export class DepartmentsController {
     private readonly getUseCase: GetDepartmentService,
   ) {}
 
-   private getCompanyId(request: AuthenticatedRequest): string {
-    return request.user.uid; 
+  private getCompanyId(request: AuthenticatedRequest): string {
+    return request.user.uid;
   }
 
-
   @Post()
+  @ApiBody({ type: CreateDepartmentDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Departamento creado',
+    type: ResponseDepartmentDto,
+  })
+  @ApiUnauthorized()
+  @ApiResponse({
+    status: 400,
+    description: 'Datos inválidos',
+    schema: {
+      example: {
+        statusCode: 400,
+        error: 'Bad Request',
+        message: ['Campo inválido'],
+      },
+    },
+  })
   create(
     @Req() request: AuthenticatedRequest,
     @Body() dto: CreateDepartmentDto,
@@ -49,6 +70,12 @@ export class DepartmentsController {
   }
 
   @Get()
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de departamentos paginada',
+    type: PaginatedMetaResponseDto<ResponseDepartmentDto>,
+  })
+  @ApiUnauthorized()
   findAll(
     @Req() request: AuthenticatedRequest,
     @Query(new ValidationPipe({ transform: true })) pagination: PaginationDto,
@@ -58,6 +85,23 @@ export class DepartmentsController {
   }
 
   @Get(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Departamento encontrado',
+    type: ResponseDepartmentDto,
+  })
+  @ApiUnauthorized()
+  @ApiResponse({
+    status: 404,
+    description: 'Departamento no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Departamento no encontrado',
+      },
+    },
+  })
   findOne(
     @Req() request: AuthenticatedRequest,
     @Param('id') id: string,
@@ -66,6 +110,24 @@ export class DepartmentsController {
   }
 
   @Patch(':id')
+  @ApiBody({ type: UpdateDepartmentDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Departamento actualizado',
+    type: ResponseDepartmentDto,
+  })
+  @ApiUnauthorized()
+  @ApiResponse({
+    status: 404,
+    description: 'Departamento no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Departamento no encontrado',
+      },
+    },
+  })
   update(
     @Req() request: AuthenticatedRequest,
     @Param('id') id: string,
@@ -75,6 +137,22 @@ export class DepartmentsController {
   }
 
   @Delete(':id')
+  @ApiResponse({
+    status: 200,
+    description: 'Departamento eliminado correctamente',
+  })
+  @ApiUnauthorized()
+  @ApiResponse({
+    status: 404,
+    description: 'Departamento no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Departamento no encontrado',
+      },
+    },
+  })
   delete(@Req() request: AuthenticatedRequest, @Param('id') id: string) {
     return this.deleteUseCase.execute(this.getCompanyId(request), id);
   }

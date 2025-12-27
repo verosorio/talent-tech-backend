@@ -12,7 +12,7 @@ export class CreateDepartmentService {
 
     if (exists) {
       throw new ConflictException(
-        'Department name already exists for this company',
+        'El nombre del Departamente ya existe para esta compañía',
       );
     }
 

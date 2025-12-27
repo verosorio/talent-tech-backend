@@ -18,7 +18,7 @@ export class UpdateDepartmentService {
     const department = await this.departmentRepository.findById(id);
 
     if (!department || department.companyId !== companyId) {
-      throw new NotFoundException('Department not found');
+      throw new NotFoundException('Departamento no encontrado');
     }
 
     return this.departmentRepository.update(id, dto);

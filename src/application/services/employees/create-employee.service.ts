@@ -17,7 +17,7 @@ export class CreateEmployeeService {
     );
     if (exists) {
       throw new ConflictException(
-        'Email already exists for this company'
+        'El email ya se encuentra registrado en esta compañía'
       );
     }
     return this.employeeRepository.create({

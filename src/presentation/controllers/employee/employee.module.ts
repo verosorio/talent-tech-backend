@@ -12,7 +12,6 @@ import { ListEmployeesUseCase } from '@domain/uses-cases/employees/list-employee
 import { ListEmployeesService } from '@application/services/employees/list-employees.service';
 import { UpdateEmployeeUseCase } from '@domain/uses-cases/employees/update-employee.use-case';
 import { UpdateEmployeeService } from '@application/services/employees/update-employee.service';
-import { GetDepartmentService } from '@application/services/departments/get-department.service';
 import { DepartmentRepository } from '@domain/repositories/department.repository';
 import { DepartmentDatasource } from '@infrastructure/datasources/department.datasource';
 import { GetEmployeeService } from '@application/services/employees/get-employee.service';

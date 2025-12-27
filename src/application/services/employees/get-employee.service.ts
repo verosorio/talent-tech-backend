@@ -8,7 +8,7 @@ export class GetEmployeeService {
 
   async execute(companyId: string, id: string): Promise<Employee> {
     const employee = await this.employeeRepository.findById(companyId, id);
-    if (!employee) throw new NotFoundException('Employee not found');
+    if (!employee) throw new NotFoundException('Empleado no encontrado');
     return employee;
   }
 }

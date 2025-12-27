@@ -23,7 +23,7 @@ export class UploadEmployeesService {
           companyId,
           row.email
         );
-        if (exists) throw new ConflictException('Email already exists');
+        if (exists) throw new ConflictException('El email ya se encuentra registrado');
 
         let departmentId: string | undefined;
         if (row.departmentName) {
@@ -31,7 +31,7 @@ export class UploadEmployeesService {
             companyId,
             row.departmentName
           );
-          if (!dept) throw new Error(`Department ${row.departmentName} not found`);
+          if (!dept) throw new Error(`Departamento no encontrado`);
           departmentId = dept.id;
         }
 

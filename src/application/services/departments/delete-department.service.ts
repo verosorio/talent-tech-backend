@@ -12,7 +12,7 @@ export class DeleteDepartmentService {
     const department = await this.departmentRepository.findById(id);
 
     if (!department || department.companyId !== companyId) {
-      throw new NotFoundException('Department not found');
+      throw new NotFoundException('Departamento no encontrado');
     }
 
     await this.departmentRepository.softDelete(id);

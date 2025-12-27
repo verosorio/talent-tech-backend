@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class ResponseDepartmentDto {
   @ApiProperty({ description: 'ID único del departamento' })
@@ -7,6 +7,9 @@ export class ResponseDepartmentDto {
   @ApiProperty({ description: 'Nombre del departamento' })
   name: string;
 
-  @ApiProperty({ description: 'Descripción del departamento', nullable: true })
-  description: string | null;
+  @ApiPropertyOptional({
+    description: 'Descripción del departamento',
+    example: 'Descripción opcional',
+  })
+  description?: string | null;
 }

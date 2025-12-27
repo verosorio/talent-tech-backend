@@ -8,7 +8,7 @@ export class DeleteEmployeeService {
   async execute(companyId: string, id: string): Promise<void> {
     const employee = await this.employeeRepository.findById(companyId, id);
     if (!employee) {
-      throw new NotFoundException('Employee not found');
+      throw new NotFoundException('Empleado no encontrado');
     }
     await this.employeeRepository.delete(companyId, id);
   }

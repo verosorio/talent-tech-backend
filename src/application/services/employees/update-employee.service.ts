@@ -10,13 +10,13 @@ export class UpdateEmployeeService {
   async execute(companyId: string, id: string, dto: UpdateEmployeeDto): Promise<Employee> {
     const employee = await this.employeeRepository.findById(companyId, id);
     if (!employee) {
-      throw new NotFoundException('Employee not found');
+      throw new NotFoundException('Empleado no encontrado');
     }
 
     if (dto.email && dto.email !== employee.email) {
       const exists = await this.employeeRepository.existsByEmail(companyId, dto.email);
       if (exists) {
-        throw new ConflictException('Email already exists for this company');
+        throw new ConflictException('El email ya se encuentra registrado en esta compañía');
       }
     }
 
