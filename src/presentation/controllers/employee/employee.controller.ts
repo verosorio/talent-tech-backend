@@ -38,7 +38,7 @@ import { UploadEmployeesUseCase } from '@domain/uses-cases/employees/upload-empl
 @ApiTags('Empleados')
 @ApiBearerAuth()
 @Controller('employees')
-@UseGuards(JwtAuthGuard) 
+@UseGuards(JwtAuthGuard)
 export class EmployeesController {
   constructor(
     private readonly createUseCase: CreateEmployeeUseCase,
@@ -112,6 +112,17 @@ export class EmployeesController {
     type: ResponseEmployeeDto,
   })
   @ApiUnauthorized()
+  @ApiResponse({
+    status: 404,
+    description: 'Empleado no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Empleado no encontrado',
+      },
+    },
+  })
   async findOne(@Req() request: AuthenticatedRequest, @Param('id') id: string) {
     return this.getUseCase.execute(this.getCompanyId(request), id);
   }
@@ -123,7 +134,6 @@ export class EmployeesController {
     description: 'Empleado actualizado',
     type: ResponseEmployeeDto,
   })
-  @ApiUnauthorized()
   @ApiResponse({
     status: 400,
     description: 'Datos inválidos',
@@ -132,6 +142,18 @@ export class EmployeesController {
         statusCode: 400,
         error: 'Bad Request',
         message: ['Campo inválido'],
+      },
+    },
+  })
+  @ApiUnauthorized()
+  @ApiResponse({
+    status: 404,
+    description: 'Empleado no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Empleado no encontrado',
       },
     },
   })
@@ -146,6 +168,17 @@ export class EmployeesController {
   @Delete(':id')
   @ApiResponse({ status: 200, description: 'Empleado eliminado correctamente' })
   @ApiUnauthorized()
+  @ApiResponse({
+    status: 404,
+    description: 'Empleado no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Empleado no encontrado',
+      },
+    },
+  })
   async delete(@Req() request: AuthenticatedRequest, @Param('id') id: string) {
     return this.deleteUseCase.execute(this.getCompanyId(request), id);
   }
@@ -160,7 +193,6 @@ export class EmployeesController {
     description: 'Archivo CSV procesado',
     type: BulkUploadResultDto,
   })
-  @ApiUnauthorized()
   @ApiResponse({
     status: 400,
     description: 'Archivo inválido',
@@ -169,6 +201,18 @@ export class EmployeesController {
         statusCode: 400,
         error: 'Bad Request',
         message: ['Archivo CSV requerido o formato incorrecto'],
+      },
+    },
+  })
+  @ApiUnauthorized()
+  @ApiResponse({
+    status: 404,
+    description: 'Empleado no encontrado',
+    schema: {
+      example: {
+        statusCode: 404,
+        error: 'Not Found',
+        message: 'Empleado no encontrado',
       },
     },
   })

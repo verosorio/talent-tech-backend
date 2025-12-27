@@ -18,8 +18,11 @@ export class ListEmployeesUseCase {
       hiredTo?: Date;
     },
   ): Promise<PaginatedResponseDto<ResponseEmployeeDto>> {
-    const { data, total } =
-      await this.listEmployeesService.execute(companyId, pagination, filters);
+    const { data, total } = await this.listEmployeesService.execute(
+      companyId,
+      pagination,
+      filters,
+    );
 
     const response = data.map((emp) => ({
       id: emp.id,
@@ -28,7 +31,13 @@ export class ListEmployeesUseCase {
       email: emp.email,
       isActive: emp.isActive,
       hiredAt: emp.hiredAt,
-      department: emp.department ?? null,
+      department: emp.department
+        ? {
+            id: emp.department.id,
+            name: emp.department.name,
+            description: emp.department.description ?? null,
+          }
+        : null,
     }));
 
     return new PaginatedResponseDto(

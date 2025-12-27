@@ -39,6 +39,11 @@ export class CreateEmployeeDto {
   @IsBoolean({ message: 'isActive debe ser verdadero o falso' })
   isActive?: boolean;
 
+  @ApiProperty({
+    description: 'Fecha de contratación del empleado',
+    type: String,
+    format: 'date-time',
+  })
   @IsDateString(
     {},
     { message: 'hiredAt debe ser una fecha válida en formato ISO' },

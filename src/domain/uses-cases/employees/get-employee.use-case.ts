@@ -13,9 +13,15 @@ export class GetEmployeeUseCase {
       firstName: employee.firstName,
       lastName: employee.lastName,
       email: employee.email,
-      department: employee.department || null,
       isActive: employee.isActive,
       hiredAt: employee.hiredAt,
+      department: employee.department
+        ? {
+            id: employee.department.id,
+            name: employee.department.name,
+            description: employee.department.description ?? null,
+          }
+        : null,
     };
   }
 }

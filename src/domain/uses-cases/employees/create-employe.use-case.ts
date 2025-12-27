@@ -9,7 +9,7 @@ export class CreateEmployeeUseCase {
 
   async execute(
     companyId: string,
-    dto: CreateEmployeeDto
+    dto: CreateEmployeeDto,
   ): Promise<ResponseEmployeeDto> {
     const employee = await this.createEmployeeService.execute(companyId, dto);
 
@@ -20,7 +20,13 @@ export class CreateEmployeeUseCase {
       email: employee.email,
       isActive: employee.isActive,
       hiredAt: employee.hiredAt,
-      department: employee.department || null,
+      department: employee.department
+        ? {
+            id: employee.department.id,
+            name: employee.department.name,
+            description: employee.department.description ?? null,
+          }
+        : null,
     };
   }
 }
