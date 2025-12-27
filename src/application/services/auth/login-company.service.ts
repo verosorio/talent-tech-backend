@@ -23,13 +23,13 @@ export class LoginCompanyService {
     const company = await this.companyRepository.findByEmail(dto.email);
 
     if (!company || company.deletedAt) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Credenciales inválidas');
     }
 
     const passwordMatch = await bcrypt.compare(dto.password, company.password);
 
     if (!passwordMatch) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Credenciales inválidas');
     }
 
     const payload = { uid: company.id };

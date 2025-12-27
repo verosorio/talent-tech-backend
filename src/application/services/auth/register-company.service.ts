@@ -20,7 +20,7 @@ export class RegisterCompanyService {
     const existing = await this.companyRepository.findByEmail(dto.email);
 
     if (existing && !existing.deletedAt) {
-      throw new ConflictException('Email already registered');
+      throw new ConflictException('El correo electrónico ya está registrado');
     }
 
     const hashedPassword = await bcrypt.hash(dto.password, 10);
