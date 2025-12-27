@@ -1,22 +1,19 @@
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsString,
-  MinLength,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 
 export class RegisterCompanyDto {
-  @IsString()
-  @IsNotEmpty({ message: 'name is required' })
+  @ApiProperty({ description: 'Nombre de la empresa' })
+  @IsString({ message: 'El nombre debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El nombre es obligatorio' })
   name: string;
 
-  @IsEmail({}, { message: 'email must be a valid email address' })
-  @IsNotEmpty({ message: 'email is required' })
+  @ApiProperty({ description: 'Correo electrónico de la empresa' })
+  @IsEmail({}, { message: 'El correo electrónico debe ser válido' })
+  @IsNotEmpty({ message: 'El correo electrónico es obligatorio' })
   email: string;
 
-  @IsString({ message: 'password must be a string' })
-  @MinLength(6, {
-    message: 'password must be at least 6 characters long',
-  })
+  @ApiProperty({ description: 'Contraseña de la empresa (mínimo 6 caracteres)' })
+  @IsString({ message: 'La contraseña debe ser una cadena de texto' })
+  @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres' })
   password: string;
 }

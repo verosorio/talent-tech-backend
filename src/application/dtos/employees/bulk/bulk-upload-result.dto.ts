@@ -1,9 +1,18 @@
-import { BulkEmployeeDto } from "./bulk-employee.dto";
+import { ApiProperty } from '@nestjs/swagger';
+import { BulkEmployeeDto } from './bulk-employee.dto';
 
-export interface BulkUploadResultDto {
+class FailedBulkEmployeeDto {
+  @ApiProperty({ description: 'Fila del empleado que falló' })
+  row: BulkEmployeeDto;
+
+  @ApiProperty({ description: 'Motivo del fallo' })
+  reason: string;
+}
+
+export class BulkUploadResultDto {
+  @ApiProperty({ description: 'Empleados cargados correctamente', type: [BulkEmployeeDto] })
   success: BulkEmployeeDto[];
-  failed: {
-    row: BulkEmployeeDto;
-    reason: string;
-  }[];
+
+  @ApiProperty({ description: 'Empleados que fallaron al cargar', type: [FailedBulkEmployeeDto] })
+  failed: FailedBulkEmployeeDto[];
 }

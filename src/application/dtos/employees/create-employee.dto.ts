@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsString,
   IsEmail,
@@ -9,26 +10,39 @@ import {
 } from 'class-validator';
 
 export class CreateEmployeeDto {
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ description: 'Nombre del empleado' })
+  @IsString({ message: 'El nombre debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El nombre es obligatorio' })
   firstName: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ description: 'Apellido del empleado' })
+  @IsString({ message: 'El apellido debe ser una cadena de texto' })
+  @IsNotEmpty({ message: 'El apellido es obligatorio' })
   lastName: string;
 
-  @IsEmail()
+  @ApiProperty({ description: 'Correo electrónico del empleado' })
+  @IsEmail({}, { message: 'El correo electrónico debe ser válido' })
+  @IsNotEmpty({ message: 'El correo electrónico es obligatorio' })
   email: string;
 
-  @IsUUID()
+  @ApiPropertyOptional({
+    description: 'ID del departamento al que pertenece el empleado',
+    type: String,
+    format: 'uuid',
+  })
+  @IsUUID('4', { message: 'El ID del departamento debe ser un UUID válido' })
   @IsOptional()
   departmentId?: string | null;
 
-  @IsBoolean()
+  @ApiPropertyOptional({ description: 'Indica si el empleado está activo' })
   @IsOptional()
+  @IsBoolean({ message: 'isActive debe ser verdadero o falso' })
   isActive?: boolean;
 
-  @IsDateString()
-  @IsNotEmpty()
+  @IsDateString(
+    {},
+    { message: 'hiredAt debe ser una fecha válida en formato ISO' },
+  )
+  @IsNotEmpty({ message: 'La fecha de contratación es obligatoria' })
   hiredAt: string;
 }

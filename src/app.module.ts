@@ -8,6 +8,7 @@ import { AuthModule } from '@presentation/controllers/auth/auth.module';
 import { DepartmentModule } from '@presentation/controllers/department/department.module';
 import { EmployeeModule } from '@presentation/controllers/employee/employee.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { EmployeeDepartmentHistoryModule } from '@presentation/controllers/employee-department-history/employee-department-history.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     AuthModule,
     DepartmentModule,
     EmployeeModule,
+    EmployeeDepartmentHistoryModule
   ],
   controllers: [AppController],
   providers: [AppService, JwtService],
